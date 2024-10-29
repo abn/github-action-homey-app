@@ -1,0 +1,29 @@
+name: Setup Homey Project Environment
+description: Configure the environment with the essentials (node, homey etc.)
+
+inputs:
+  node-version:
+    description: "Node version to use to setup environment."
+    default: 20
+  working-directory:
+    description: "Working directory to setup environment in."
+    default: "${{ github.workspace }}"
+
+runs:
+  using: composite
+  steps:
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version || '' }}
+        cache: "npm"
+
+    - name: Install Homey
+      shell: bash
+      run: |
+        npm install -g homey
+
+    - name: Install dependencies
+      working-directory: ${{inputs.working-directory}}
+      shell: bash
+      run: npm ci --ignore-scripts

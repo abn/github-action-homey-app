@@ -1,0 +1,33 @@
+name: Version Update A Homey Application
+description: Use homey cli to update version of an app.
+
+inputs:
+  changelog:
+    description: "What's new in this version?"
+    required: true
+  next:
+    description: "Next version, can be patch/minor/major or explicit semver version."
+    default: "patch"
+  working-directory:
+    description: "Working directory to setup environment in."
+    default: "${{ github.workspace }}"
+
+outputs:
+  old-version:
+    description: "Old app version"
+    value: ${{ steps.version.outputs.old-version }}
+  new-version:
+    description: "New app version"
+    value: ${{ steps.version.outputs.new-version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Bump Version
+      id: version
+      shell: bash
+      working-directory: "${{ inputs.working-directory }}"
+      run: |
+        echo "old-version=$(jq --raw-output .version app.json)" >> $GITHUB_OUTPUT
+        homey app version "${{ inputs.next }}" --changelog "${{ inputs.changelog }}"
+        echo "new-version=$(jq --raw-output .version app.json)" >> $GITHUB_OUTPUT

@@ -1,0 +1,20 @@
+name: Validate Homey Application
+description: Use homey cli to validate an app.
+
+inputs:
+  level:
+    description: "Validation level. Can be: debug, publish, verified."
+    default: "publish"
+
+  working-directory:
+    description: "Working directory to setup environment in."
+    default: "${{ github.workspace }}"
+
+runs:
+  using: composite
+  steps:
+    - name: Validate
+      shell: bash
+      working-directory: "${{ inputs.working-directory }}"
+      run: |
+        homey app validate --level "${{ inputs.level }}"

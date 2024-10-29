@@ -1,0 +1,31 @@
+name: Publish Homey Application
+description: Use homey cli to publish an app.
+
+inputs:
+  personal_access_token:
+    description: "Homey Personal Access Token (PAT) used for publication."
+    required: true
+  working-directory:
+    description: "Working directory to setup environment in."
+    default: "${{ github.workspace }}"
+
+outputs:
+  url:
+    description: "App url including FQDN"
+    value: ${{ steps.publish.outputs.url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Publish
+      id: publish
+      shell: bash
+      working-directory: "${{ inputs.working-directory }}"
+      environment:
+        HOMEY_HEADLESS: "1"
+        HOMEY_PAT: "${{ inputs.personal_access_token }}"
+      run: |
+        homey app publish
+        export APP_URL="https://tools.developer.homey.app/apps/app/$(jq --raw-output .id app.json)"
+        echo "url=${APP_URL}" >> $GITHUB_OUTPUT
+        echo "Manage your app at ${APP_URL}." >> $GITHUB_STEP_SUMMARY
