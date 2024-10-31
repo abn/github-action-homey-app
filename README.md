@@ -123,7 +123,7 @@ name: Publish Homey App
 on:
   workflow_dispatch:
   release:
-    type: published
+    types: [published]
 
 jobs:
   main:
