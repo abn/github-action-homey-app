@@ -93,6 +93,7 @@ jobs:
       - uses: abn/github-action-homey-app/setup@main
 
       - uses: abn/github-action-homey-app/version@main
+        id: version-update
         with:
           changelog: "${{ inputs.changelog }}"
           next: "${{ inputs.version }}"
@@ -121,9 +122,8 @@ jobs:
 name: Publish Homey App
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - v**
+  release:
+    type: published
 
 jobs:
   main:
